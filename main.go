@@ -67,13 +67,13 @@ func main() {
 			for _, zone := range server.Zones {
 				if (zone.Zone == "fr" || zone.Zone == "westernEurope") && zone.Availability != "unknown" {
 					// send dispo
-					SendEmail("localhost", 25, "plex", "plex190058", []string{"bpetetot@gmail.com"}, "Kimsufi Dispo", SEND)
+					SendEmail("localhost", 25, "", "", []string{""}, "Kimsufi Dispo", SEND)
 				}
 			}
 			for _, metazone := range server.MetaZones {
 				if (metazone.Zone == "fr" || metazone.Zone == "westernEurope") && metazone.Availability != "unknown" {
 					// send dispo
-					SendEmail("localhost", 25, "plex", "plex190058", []string{"bpetetot@gmail.com"}, "Kimsufi Dispo", SEND)
+					SendEmail("localhost", 25, "", "", []string{""}, "Kimsufi Dispo", SEND)
 				}
 			}
 		}
