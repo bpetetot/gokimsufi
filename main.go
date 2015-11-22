@@ -103,6 +103,8 @@ func pipeCommands(commands ...*exec.Cmd) ([]byte, error) {
 		}
 		command.Start()
 		commands[i+1].Stdin = out
+
+		defer command.Wait() // Doesn't block
 	}
 	final, err := commands[len(commands)-1].Output()
 	if err != nil {
