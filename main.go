@@ -79,7 +79,7 @@ func main() {
 		}
 	}
 
-	SendEmail("localhost", 25, "plex", "plex190058", []string{"bpetetot@gmail.com"}, "Kimsufi Dispo", SEND)
+	SendEmail("localhost", 25, "", "", []string{""}, "Kimsufi Dispo", SEND)
 }
 
 func catchPanic(err *error, functionName string) {
