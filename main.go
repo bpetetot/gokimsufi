@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"os/exec"
 )
 
@@ -81,9 +80,31 @@ func main() {
 
 // SendEmail xxx
 func SendEmail(to string, message string) {
-	if err := exec.Command("echo \"" + message + "\" | mail -s 'Dispo' -aFrom:Kimsufi Available " + to).Run(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+
+	echo := exec.Command("echo", message)
+	mail := exec.Command("mail", "-s", "Kimsufi Available", to)
+	output, err := pipeCommands(echo, mail)
+
+	if err != nil {
+		println(err)
+	} else {
+		print(string(output))
 	}
-	fmt.Println("Successfully halved image in size")
+
+}
+
+func pipeCommands(commands ...*exec.Cmd) ([]byte, error) {
+	for i, command := range commands[:len(commands)-1] {
+		out, err := command.StdoutPipe()
+		if err != nil {
+			return nil, err
+		}
+		command.Start()
+		commands[i+1].Stdin = out
+	}
+	final, err := commands[len(commands)-1].Output()
+	if err != nil {
+		return nil, err
+	}
+	return final, nil
 }
