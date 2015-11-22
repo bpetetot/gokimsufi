@@ -86,8 +86,10 @@ func SendEmail(to string) {
 	output, err := pipeCommands(echo, mail)
 
 	if err != nil {
+		println("error : ")
 		println(err)
 	} else {
+		println("output : ")
 		print(string(output))
 	}
 
