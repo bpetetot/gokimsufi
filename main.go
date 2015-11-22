@@ -81,8 +81,8 @@ func main() {
 // SendEmail xxx
 func SendEmail(to string, message string) {
 
-	echo := exec.Command("echo", message)
-	mail := exec.Command("mail", "-s", "Kimsufi Available", to)
+	echo := exec.Command("echo", "\""+message+"\"")
+	mail := exec.Command("mail", "-s", "\"Kimsufi Available\"", to)
 	output, err := pipeCommands(echo, mail)
 
 	if err != nil {
