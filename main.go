@@ -81,9 +81,7 @@ func main() {
 
 // SendEmail xxx
 func SendEmail(to string, message string) {
-	cmd := "mail"
-	args := []string{"-s", "'dispo'", "-aFrom:Kimsufi Available", to, message}
-	if err := exec.Command(cmd, args...).Run(); err != nil {
+	if err := exec.Command("echo \"" + message + "\" | mail -s 'Dispo' -aFrom:Kimsufi Available " + to).Run(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
