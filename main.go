@@ -33,9 +33,11 @@ type ZoneResp struct {
 	Zone         string `json:"zone"`
 }
 
+var send = "https://www.kimsufi.com/fr/commande/kimsufi.xml?reference=150sk30&quantity=1"
+
 func main() {
 	URL := "https://ws.ovh.com/dedicated/r2/ws.dispatcher/getAvailability2"
-	//SEND := "https://www.kimsufi.com/fr/commande/kimsufi.xml?reference=150sk30&quantity=1"
+
 	fmt.Println(URL)
 
 	// Create HTTP request
@@ -81,7 +83,7 @@ func main() {
 // SendEmail xxx
 func SendEmail(to string) {
 
-	echo := exec.Command("echo", "Test")
+	echo := exec.Command("echo", send)
 	mail := exec.Command("mail", "-s", "Kimsufi", to)
 	output, err := pipeCommands(echo, mail)
 
