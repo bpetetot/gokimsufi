@@ -35,7 +35,7 @@ type ZoneResp struct {
 
 func main() {
 	URL := "https://ws.ovh.com/dedicated/r2/ws.dispatcher/getAvailability2"
-	SEND := "https://www.kimsufi.com/fr/commande/kimsufi.xml?reference=150sk30&quantity=1"
+	//SEND := "https://www.kimsufi.com/fr/commande/kimsufi.xml?reference=150sk30&quantity=1"
 	fmt.Println(URL)
 
 	// Create HTTP request
@@ -63,26 +63,26 @@ func main() {
 			for _, zone := range server.Zones {
 				if (zone.Zone == "fr" || zone.Zone == "westernEurope") && zone.Availability != "unknown" {
 					// send dispo
-					SendEmail("bpetetot@gmail.com", SEND)
+					SendEmail("bpetetot@gmail.com")
 				}
 			}
 			for _, metazone := range server.MetaZones {
 				if (metazone.Zone == "fr" || metazone.Zone == "westernEurope") && metazone.Availability != "unknown" {
 					// send dispo
-					SendEmail("bpetetot@gmail.com", SEND)
+					SendEmail("bpetetot@gmail.com")
 				}
 			}
 		}
 	}
 
-	SendEmail("bpetetot@gmail.com", SEND)
+	SendEmail("bpetetot@gmail.com")
 }
 
 // SendEmail xxx
-func SendEmail(to string, message string) {
+func SendEmail(to string) {
 
-	echo := exec.Command("echo", "\""+message+"\"")
-	mail := exec.Command("mail", "-s", "\"Kimsufi Available\"", to)
+	echo := exec.Command("echo", "Test")
+	mail := exec.Command("mail", "-s", "Kimsufi", to)
 	output, err := pipeCommands(echo, mail)
 
 	if err != nil {
