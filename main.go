@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os/exec"
+	"flag"
 )
 
 // Resp xxx
@@ -35,9 +36,20 @@ type ZoneResp struct {
 
 var send = "https://www.kimsufi.com/fr/commande/kimsufi.xml?reference=150sk30&quantity=1"
 
+var email string
+var serverCode string
+
+
+func Init() {
+	flag.StringVar(&serverCode, "server", "", "kimsufi server code to check (150sk30)")
+	flag.StringVar(&email, "email", "", "email to send server availability")
+	flag.Parse()
+}
+
 func main() {
 	URL := "https://ws.ovh.com/dedicated/r2/ws.dispatcher/getAvailability2"
 
+	Init()
 	fmt.Println(URL)
 
 	// Create HTTP request
@@ -60,24 +72,24 @@ func main() {
 	err = json.Unmarshal(body, &m)
 
 	for _, server := range m.Answer.Availability {
-		if server.Reference == "150sk30" {
+		if server.Reference == serverCode {
 			fmt.Println(server.MetaZones)
 			for _, zone := range server.Zones {
 				if (zone.Zone == "fr" || zone.Zone == "westernEurope") && zone.Availability != "unknown" {
 					// send dispo
-					SendEmail("bpetetot@gmail.com")
+					SendEmail(email)
 				}
 			}
 			for _, metazone := range server.MetaZones {
 				if (metazone.Zone == "fr" || metazone.Zone == "westernEurope") && metazone.Availability != "unknown" {
 					// send dispo
-					SendEmail("bpetetot@gmail.com")
+					SendEmail(email)
 				}
 			}
 		}
 	}
 
-	SendEmail("bpetetot@gmail.com")
+	SendEmail(email)
 }
 
 // SendEmail xxx
