@@ -89,7 +89,7 @@ func main() {
 		}
 	}
 
-	SendEmail(email)
+	//SendEmail(email)
 }
 
 // SendEmail xxx
