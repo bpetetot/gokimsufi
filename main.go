@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os/exec"
 	"flag"
+	"time"
 )
 
 // Resp xxx
@@ -34,15 +35,17 @@ type ZoneResp struct {
 	Zone         string `json:"zone"`
 }
 
-var send = "https://www.kimsufi.com/fr/commande/kimsufi.xml?reference=150sk30&quantity=1"
+var send = "https://www.kimsufi.com/fr/commande/kimsufi.xml?reference="
 
 var email string
 var serverCode string
+var timeval int
 
 
 func Init() {
 	flag.StringVar(&serverCode, "server", "", "kimsufi server code to check (150sk30)")
 	flag.StringVar(&email, "email", "", "email to send server availability")
+	flag.IntVar(&timeval, "time", 100, "Check time in seconds");
 	flag.Parse()
 }
 
@@ -52,50 +55,54 @@ func main() {
 	Init()
 	fmt.Println(URL)
 
-	// Create HTTP request
-	client := http.Client{}
-	request, err := http.NewRequest("GET", URL, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
 
-	// Execute request
-	resp, err := client.Do(request)
-	if err != nil {
-		log.Fatal(err)
-	}
+	for {
+		// Create HTTP request
+		client := http.Client{}
+		request, err := http.NewRequest("GET", URL, nil)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+		// Execute request
+		resp, err := client.Do(request)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	var m Resp
-	err = json.Unmarshal(body, &m)
+		defer resp.Body.Close()
+		body, err := ioutil.ReadAll(resp.Body)
 
-	for _, server := range m.Answer.Availability {
-		if server.Reference == serverCode {
-			fmt.Println(server.MetaZones)
-			for _, zone := range server.Zones {
-				if (zone.Zone == "fr" || zone.Zone == "westernEurope") && zone.Availability != "unknown" {
-					// send dispo
-					SendEmail(email)
+		var m Resp
+		err = json.Unmarshal(body, &m)
+
+		for _, server := range m.Answer.Availability {
+			if server.Reference == serverCode {
+				fmt.Println(server.MetaZones)
+				for _, zone := range server.Zones {
+					if (zone.Zone == "fr" || zone.Zone == "westernEurope") && zone.Availability != "unknown" {
+						// send dispo
+						SendEmail(email)
+					}
 				}
-			}
-			for _, metazone := range server.MetaZones {
-				if (metazone.Zone == "fr" || metazone.Zone == "westernEurope") && metazone.Availability != "unknown" {
-					// send dispo
-					SendEmail(email)
+				for _, metazone := range server.MetaZones {
+					if (metazone.Zone == "fr" || metazone.Zone == "westernEurope") && metazone.Availability != "unknown" {
+						// send dispo
+						SendEmail(email)
+					}
 				}
 			}
 		}
+		
+		time.Sleep(time.Duration(timeval) * time.Second)
 	}
-
 	//SendEmail(email)
 }
 
 // SendEmail xxx
 func SendEmail(to string) {
 
-	echo := exec.Command("echo", send)
+	echo := exec.Command("echo", send + serverCode + "&quantity=1")
 	mail := exec.Command("mail", "-s", "Kimsufi", to)
 	output, err := pipeCommands(echo, mail)
 
