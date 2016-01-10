@@ -78,22 +78,27 @@ func main() {
 
 		for _, server := range m.Answer.Availability {
 			if server.Reference == serverCode {
-				fmt.Println(server.MetaZones)
+
+				fmt.Println("Check Zones : ",server.Zones)
 				for _, zone := range server.Zones {
 					if (zone.Zone == "fr" || zone.Zone == "westernEurope") && zone.Availability != "unknown" {
 						// send dispo
+						fmt.Println(" >> Available in Zone " + zone.Zone)
 						SendEmail(email)
 					}
 				}
+
+				fmt.Println("Check MetaZones : ",server.MetaZones)
 				for _, metazone := range server.MetaZones {
 					if (metazone.Zone == "fr" || metazone.Zone == "westernEurope") && metazone.Availability != "unknown" {
 						// send dispo
+						fmt.Println(" >> Available in MetaZone " + metazone.Zone)
 						SendEmail(email)
 					}
 				}
 			}
 		}
-		
+
 		time.Sleep(time.Duration(timeval) * time.Second)
 	}
 	//SendEmail(email)
